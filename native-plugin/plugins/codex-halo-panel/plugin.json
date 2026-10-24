@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "codex-halo-panel",
+  "version": "0.1.1",
+  "description": "Local Codex quota dashboard. 本机 Codex 5 小时与每周剩余额度面板。",
+  "author": {
+    "name": "BohaoFU"
+  },
+  "homepage": "https://github.com/BohaoFU/codex-halo",
+  "repository": "https://github.com/BohaoFU/codex-halo",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "Codex Halo",
+        "shortDescription": "Codex quota / 剩余额度",
+        "longDescription": "Read-only local usage dashboard with 15-second refresh, Chinese and English, global navigation and conversation panel entrypoints. 实验性本地用量面板，支持中英文。入口位置由客户端决定。",
+        "developerName": "BohaoFU",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Interactive"
+        ],
+        "brandColor": "#5C96E8",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png",
+        "defaultPrompt": "Open Codex Halo to view my remaining Codex quota. 打开用量面板。"
+      }
+    }
+  }
+}

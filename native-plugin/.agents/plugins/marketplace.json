@@ -1,0 +1,20 @@
+{
+  "name": "codex-halo-lab",
+  "interface": {
+    "displayName": "Codex Halo Lab"
+  },
+  "plugins": [
+    {
+      "name": "codex-halo-panel",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex-halo-panel"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

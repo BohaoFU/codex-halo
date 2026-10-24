@@ -9,6 +9,8 @@
 
 ## Less clicking. More clarity.
 
+**Native panel experiment:** this branch includes an installable local MCP plugin. [Setup and verification status](plugin-panel/README.md). Native sidebar placement is still unconfirmed; the stable Windows widget remains v1.3.0.
+
 Keep your remaining percentages, usage indicators and reset countdowns beside your work. Codex Halo makes it easier to see how much allowance is left and plan what comes next.
 
 | Water orb | Corner panel |
