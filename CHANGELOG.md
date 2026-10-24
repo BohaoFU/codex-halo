@@ -1,5 +1,17 @@
 # Changelog / 更新记录
 
+## 1.3.0
+
+- Remove the orb's entire hover toolbar; use right-click and the tray for commands.
+- Reduce the orb diameter to 104px and remove the empty strip below it.
+- Smoothly dock to the nearest left/right edge on release, preserve height and remember position.
+- Keep the orb inside the display work area across multi-monitor and display changes.
+
+- 删除球下方的整排悬停按钮，操作统一放在右键和托盘。
+- 球体缩至 104px，并去掉底部多余区域。
+- 松手平滑吸附左右边缘，保留高度、记住位置。
+- 支持多显示器及工作区边界，避免遮挡任务栏或移出屏幕。
+
 ## 1.2.0
 
 - Launch at sign-in defaults on for new installs, with a quiet tray-only start until Codex runs.

@@ -2,12 +2,13 @@ const {app,BrowserWindow,ipcMain,Tray,Menu,nativeImage,screen,powerMonitor}=requ
 const fs=require('node:fs');const path=require('node:path');const {UsageClient}=require('./usage.cjs');
 const {resolveLanguage,translate}=require('./i18n.js');
 const {DesktopMonitor,VisibilityPolicy,loginOptions}=require('./presence.cjs');
+const {ORB_SIZE,dockOrb}=require('./geometry.cjs');
 const smoke=process.argv.includes('--smoke-test');
-let win,settingsWin,tray,client,timer,monitor,dragStart,busy=false,quitting=false,widgetReady=false;
+let win,settingsWin,tray,client,timer,monitor,dragStart,snapTimer,busy=false,quitting=false,widgetReady=false;
 const visibility=new VisibilityPolicy();
 let config={mode:'orb',interval:15,opacity:68,alwaysOnTop:true,animation:true,startup:true,followCodex:true,language:'auto'};
 let state={usage:null,error:null,refreshing:false,config,systemLanguage:'en',language:'en',codexRunning:null,desktopError:false};
-const sizes={orb:[140,154],panel:[368,330]};
+const sizes={orb:[ORB_SIZE,ORB_SIZE],panel:[368,330]};
 const t=(key,params)=>translate(state.language,key,params);
 function configFile(){return path.join(app.getPath('userData'),'settings.json');}
 function save(){if(smoke)return;try{fs.writeFileSync(configFile(),JSON.stringify(config));}catch{}}
@@ -29,15 +30,30 @@ function updatePresence(status){
 }
 function applyStartup(){if(!smoke)app.setLoginItemSettings(loginOptions(process.execPath,app.isPackaged,app.getAppPath(),config.startup));}
 function bounds(mode,position){
-  const [width,height]=sizes[mode];const area=screen.getDisplayNearestPoint(position||screen.getCursorScreenPoint()).workArea;
+  const [width,height]=sizes[mode];const area=position&&Number.isFinite(position.x)&&Number.isFinite(position.y)?screen.getDisplayMatching({x:position.x,y:position.y,width:position.width||ORB_SIZE,height:position.height||ORB_SIZE}).workArea:screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea;
+  if(mode==='orb')return dockOrb(position,area);
   let x=mode==='panel'?area.x+area.width-width-14:(position?.x??area.x+area.width-width-24);
   let y=mode==='panel'?area.y+area.height-height-14:(position?.y??area.y+area.height-height-70);
   return {x:Math.round(Math.max(area.x,Math.min(x,area.x+area.width-width))),y:Math.round(Math.max(area.y,Math.min(y,area.y+area.height-height))),width,height};
 }
-function mode(value){if(!sizes[value])return;config.mode=value;win.setBounds(bounds(value,config.position));save();broadcast();}
+function cancelSnap(){clearInterval(snapTimer);snapTimer=null;}
+function snapOrb(animate=true,area){
+  cancelSnap();if(!win||config.mode!=='orb')return;
+  const start=win.getBounds();const target=dockOrb(start,area||screen.getDisplayMatching(start).workArea);
+  const finish=()=>{win.setBounds(target);config.position={x:target.x,y:target.y};save();};
+  if(!animate||!config.animation||(start.x===target.x&&start.y===target.y)){finish();return;}
+  const began=Date.now();
+  snapTimer=setInterval(()=>{
+    const progress=Math.min(1,(Date.now()-began)/180),ease=1-(1-progress)**3;
+    win.setPosition(Math.round(start.x+(target.x-start.x)*ease),Math.round(start.y+(target.y-start.y)*ease));
+    if(progress===1){cancelSnap();finish();}
+  },16);
+}
+function mode(value){if(!sizes[value])return;cancelSnap();const position=value==='panel'&&config.mode==='orb'?win.getBounds():config.position;config.mode=value;win.setBounds(bounds(value,position));if(value==='orb'){const b=win.getBounds();config.position={x:b.x,y:b.y};}save();broadcast();}
 function createWindow(){
   win=new BrowserWindow({...bounds(config.mode,config.position),frame:false,transparent:true,hasShadow:false,resizable:false,maximizable:false,minimizable:false,skipTaskbar:true,alwaysOnTop:config.alwaysOnTop,show:false,backgroundColor:'#00000000',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true}});
   win.setMenu(null);win.loadFile('index.html');win.once('ready-to-show',()=>{widgetReady=true;applyVisibility();});
+  if(config.mode==='orb'){const b=win.getBounds();config.position={x:b.x,y:b.y};}
   win.on('close',e=>{if(!quitting){e.preventDefault();requestHide();}});
   win.webContents.on('context-menu',()=>trayMenu().popup({window:win}));
   win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
@@ -103,16 +119,19 @@ app.whenReady().then(async()=>{
   ipcMain.on('drag',(_,phase)=>{
     if(config.mode!=='orb')return;
     const cursor=screen.getCursorScreenPoint();
-    if(phase==='start'){const b=win.getBounds();dragStart={x:cursor.x-b.x,y:cursor.y-b.y};}
-    if(phase==='move'&&dragStart)win.setPosition(cursor.x-dragStart.x,cursor.y-dragStart.y);
-    if(phase==='end'&&dragStart){dragStart=null;const b=bounds('orb',win.getBounds());win.setBounds(b);config.position={x:b.x,y:b.y};save();}
+    if(phase==='start'){cancelSnap();const b=win.getBounds();dragStart={x:cursor.x-b.x,y:cursor.y-b.y,cursorX:cursor.x,cursorY:cursor.y,moved:false};}
+    if(phase==='move'&&dragStart){
+      if(Math.abs(cursor.x-dragStart.cursorX)+Math.abs(cursor.y-dragStart.cursorY)>3)dragStart.moved=true;
+      if(dragStart.moved)win.setPosition(cursor.x-dragStart.x,cursor.y-dragStart.y);
+    }
+    if(phase==='end'&&dragStart){const moved=dragStart.moved;dragStart=null;if(moved)snapOrb(true,screen.getDisplayNearestPoint(cursor).workArea);}
   });
-  createWindow();createTray();powerMonitor.on('resume',refresh);screen.on('display-removed',()=>mode(config.mode));
+  createWindow();createTray();powerMonitor.on('resume',refresh);screen.on('display-removed',()=>mode(config.mode));screen.on('display-metrics-changed',()=>mode(config.mode));
   applyStartup();save();
   if(smoke){await refresh();await smokeTest();}
   else{monitor=new DesktopMonitor();monitor.on('status',updatePresence);monitor.start();if(!config.followCodex)refresh();}
 });
-app.on('before-quit',()=>{quitting=true;stopPolling();monitor?.stop();client?.close();});
+app.on('before-quit',()=>{quitting=true;stopPolling();cancelSnap();monitor?.stop();client?.close();});
 app.on('window-all-closed',()=>{});
 }
 async function smokeTest(){
@@ -123,9 +142,18 @@ async function smokeTest(){
     const check=async(label,expr)=>{if(!await win.webContents.executeJavaScript(expr))throw new Error(label);};
     await check('orb data missing',`document.querySelector('#orbPrimary').textContent.includes('%')`);
     await check('system language not applied',`document.documentElement.lang===${JSON.stringify(state.language==='zh'?'zh-CN':'en')}`);
-    await check('orb size mismatch',`innerWidth===140 && document.querySelector('#sphere').offsetWidth===124`);
+    await check('orb size mismatch',`innerWidth===116 && innerHeight===116 && document.querySelector('#sphere').offsetWidth===104`);
+    await check('toolbar still exists',`document.querySelector('.orb-tools')===null`);
     await check('weekly outside circle',`(()=>{const a=document.querySelector('.orb-week').getBoundingClientRect(),b=document.querySelector('#sphere').getBoundingClientRect();return a.left>b.left&&a.right<b.right&&a.top>b.top&&a.bottom<b.bottom})()`);
     if(trayMenu().items[0].label!==t('show'))throw new Error('tray locale mismatch');
+    const area=screen.getDisplayMatching(win.getBounds()).workArea;
+    for(const side of ['left','right']){
+      const y=area.y+Math.round((area.height-ORB_SIZE)/2);
+      win.setPosition(side==='left'?area.x+30:area.x+area.width-ORB_SIZE-30,y);
+      snapOrb(true,area);await new Promise(r=>setTimeout(r,240));
+      const b=win.getBounds(),expected=side==='left'?area.x:area.x+area.width-ORB_SIZE;
+      if(b.x!==expected||b.y!==y||config.position.x!==expected)throw new Error('edge snap failed: '+side);
+    }
     fs.writeFileSync(path.join(out,'halo-orb.png'),(await win.webContents.capturePage()).toPNG());
     mode('panel');await new Promise(r=>setTimeout(r,700));
     await check('panel switch failed',`document.body.dataset.mode==='panel'`);
@@ -153,7 +181,7 @@ async function smokeTest(){
     updatePresence({error:true});if(!win.isVisible())throw new Error('unknown presence hid a known-running desktop');
     state.desktopError=false;
     const before=state.usage?.updatedAt;await refresh();if(state.usage?.updatedAt<=before)throw new Error('second live refresh failed');
-    const result={ok:!state.error,error:state.error,systemLanguage:state.systemLanguage,language:state.language,usage:state.usage,checks:['live RPC','compact orb + weekly inside circle','auto system language','localized tray','manual language override + return to auto','panel switch','settings fit','opacity + animation + interval controls','Codex exit hides both modes + pauses polling','restart restores widget','manual hide survives polling','unknown presence preserves known state','second live refresh']};
+    const result={ok:!state.error,error:state.error,systemLanguage:state.systemLanguage,language:state.language,usage:state.usage,checks:['live RPC','104px orb + weekly inside circle','no toolbar','animated left + right snap and saved position','auto system language','localized tray','manual language override + return to auto','panel switch','settings fit','opacity + animation + interval controls','Codex exit hides both modes + pauses polling','restart restores widget','manual hide survives polling','unknown presence preserves known state','second live refresh']};
     fs.writeFileSync(path.join(out,'smoke-result.json'),JSON.stringify(result,null,2));
   }catch(e){fs.writeFileSync(path.join(out,'smoke-result.json'),JSON.stringify({ok:false,error:e.message}));}
   app.quit();
