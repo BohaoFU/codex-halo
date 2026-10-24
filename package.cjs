@@ -1,7 +1,9 @@
 const fs=require('node:fs'),path=require('node:path');
+// Electron downloads its runtime lazily; resolve it before copying a clean npm install.
+const electronDist=path.dirname(require('electron'));
 const dest=path.resolve(__dirname,'..','CodexHalo');
 fs.mkdirSync(dest,{recursive:true});
-fs.cpSync(path.join(__dirname,'node_modules','electron','dist'),dest,{recursive:true});
+fs.cpSync(electronDist,dest,{recursive:true});
 fs.renameSync(path.join(dest,'electron.exe'),path.join(dest,'CodexHalo.exe'));
 const target=path.join(dest,'resources','app');fs.mkdirSync(target,{recursive:true});
 for(const file of ['package.json','main.cjs','usage.cjs','preload.cjs','i18n.js','index.html','style.css','renderer.js','settings.html','settings.js','icon.png','icon.ico'])fs.copyFileSync(path.join(__dirname,file),path.join(target,file));
