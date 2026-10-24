@@ -22,3 +22,4 @@
 .setting-row{gap:12px}.setting-row>span{min-width:0}.setting-row small{line-height:1.45}.setting-row input[type=checkbox]{flex-shrink:0}
 .language-row{margin:13px 0}.language-row select{max-width:205px}.settings-note{font-size:9px;line-height:1.7}
 .settings-card header strong{font-size:16px}
+.setting-row .presence-status{color:#91d5c6;font-size:9px}

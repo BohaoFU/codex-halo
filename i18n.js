@@ -2,6 +2,7 @@
   const messages={
     zh:{
       show:'显示 Codex Halo',orb:'水波悬浮球',panel:'右下角面板',refresh:'立即刷新',settings:'外观与设置',hide:'隐藏到托盘',quit:'退出 Halo',
+      followCodex:'跟随 Codex 显示',followCodexHint:'Codex 退出时隐藏，重新打开时自动显示',desktopChecking:'正在检测 Codex…',desktopRunning:'Codex 桌面客户端正在运行',desktopStopped:'等待 Codex 启动 · 悬浮窗已隐藏',desktopUnknown:'暂时无法检测 Codex · 稍后重试',
       switchPanel:'切换到右下角面板',switchOrb:'切换为悬浮球',closeSettings:'关闭设置',settingsTitle:'让用量，轻轻浮现。',
       tagline:'让用量，轻轻浮现',primaryTitle:'5 小时额度',primaryLabel:'5 小时剩余',secondaryLabel:'每周',overallLabel:'整体',weeklyTitle:'每周额度',overallTitle:'整体额度',daysTitle:'{n} 天额度',hoursTitle:'{n} 小时额度',shortTerm:'SHORT TERM',weekly:'WEEKLY',longTerm:'LONG TERM',remaining:'剩余可用',
       connected:'已连接 Codex',connecting:'正在连接 Codex',offline:'连接异常 · 保留上次数据',stale:'数据已过期',unknownReset:'重置时间暂不可用',waitingReset:'等待服务更新额度',resetIn:'{time}后重置',day:'{n} 天',hour:'{n} 时',minute:'{n} 分',
@@ -12,6 +13,7 @@
     },
     en:{
       show:'Show Codex Halo',orb:'Water orb',panel:'Corner panel',refresh:'Refresh now',settings:'Appearance & settings',hide:'Hide to tray',quit:'Quit Halo',
+      followCodex:'Follow Codex',followCodexHint:'Hide when Codex exits; show when it returns',desktopChecking:'Checking for Codex…',desktopRunning:'Codex desktop is running',desktopStopped:'Waiting for Codex · widget hidden',desktopUnknown:'Unable to check Codex · retrying',
       switchPanel:'Switch to corner panel',switchOrb:'Switch to orb',closeSettings:'Close settings',settingsTitle:'Your usage, in flow.',
       tagline:'YOUR USAGE, IN FLOW',primaryTitle:'5-hour limit',primaryLabel:'5h remaining',secondaryLabel:'Weekly',overallLabel:'Overall',weeklyTitle:'Weekly limit',overallTitle:'Overall limit',daysTitle:'{n}-day limit',hoursTitle:'{n}-hour limit',shortTerm:'SHORT TERM',weekly:'WEEKLY',longTerm:'LONG TERM',remaining:'remaining',
       connected:'Connected to Codex',connecting:'Connecting to Codex',offline:'Offline · last known usage',stale:'Usage is out of date',unknownReset:'Reset time unavailable',waitingReset:'Waiting for updated limits',resetIn:'Resets in {time}',day:'{n}d',hour:'{n}h',minute:'{n}m',

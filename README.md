@@ -25,7 +25,9 @@ Keep your remaining percentages, usage indicators and reset countdowns beside yo
 - **Automatic updates:** refresh every 15 seconds by default, choose 10 / 15 / 30 / 60 seconds, or refresh manually.
 - **Transparent gradients:** cyan-to-violet glass, adjustable opacity and optional flowing waves.
 - **Chinese and English:** follows your Windows preferred display language, with a manual override.
-- **Desktop controls:** always-on-top, drag to move, hide to tray, remembered orb position and optional launch at sign-in.
+- **Follows Codex:** checks the desktop client about every 3 seconds, hides both widget modes when it exits, and restores them when it returns. Halo's own background CLI is excluded.
+- **Launch at sign-in:** enabled by default for new installs; stays quietly in the tray until Codex starts. Existing explicit opt-outs are preserved.
+- **Desktop controls:** always-on-top, drag to move, hide to tray and remembered orb position. A manual hide lasts until you show Halo or restart Codex.
 - **Clear connection state:** keep the last reading during an outage, mark it as stale and retry automatically. Unknown values stay `--`.
 
 ## Download and start
@@ -43,6 +45,8 @@ The portable build requires Windows 10/11 x64 and an available Codex CLI. It doe
 | Hover over the orb | Reveal switch, refresh, settings and hide buttons |
 | Right-click the widget or tray icon | Show, switch, configure, hide or quit |
 | Open settings | Change language, opacity, animation, topmost mode, refresh interval and startup |
+
+Both **Launch at sign-in** and **Follow Codex** can be changed in settings. While following Codex, allowance polling pauses when its desktop app is absent; the tray and settings remain available. This follows the desktop application, including a minimized app, rather than a standalone CLI session. If Windows temporarily cannot inspect processes, Halo keeps the last known state and retries. For a custom desktop installation, set `CODEX_HALO_DESKTOP_EXE` to the GUI executable (not the CLI).
 
 ## What the numbers mean
 
