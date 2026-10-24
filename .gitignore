@@ -1,0 +1,14 @@
+node_modules/
+dist/
+out/
+release/
+work/
+*.zip
+*.log
+.env
+.env.*
+auth.json
+settings.json
+smoke-result.json
+.DS_Store
+Thumbs.db

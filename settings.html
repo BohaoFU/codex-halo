@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'"><title>Codex Halo</title><link rel="stylesheet" href="style.css"></head><body><main class="settings-card glass">
+<header style="-webkit-app-region:drag"><img class="brand-icon" src="icon.png" alt=""><strong data-i18n="settingsTitle">Your usage, in flow.</strong><button id="close" style="-webkit-app-region:no-drag" data-i18n-title="closeSettings">×</button></header>
+<div class="section-label" data-i18n="displaySection">DISPLAY</div><div class="segmented"><button id="orbMode" data-i18n="orb">Water orb</button><button id="panelMode" data-i18n="panel">Corner panel</button></div>
+<label class="setting-row language-row" for="language"><span data-i18n="language">Language</span><select id="language"><option value="auto" data-i18n="systemLanguage">Auto · System language</option><option value="zh">简体中文</option><option value="en">English</option></select></label>
+<div class="section-label" data-i18n="appearanceSection">APPEARANCE</div><div class="range-row"><label for="opacity"><span data-i18n="opacity">Glass opacity</span><output id="opacityValue">68%</output></label><input id="opacity" type="range" min="35" max="100" step="1"></div>
+<label class="setting-row" for="animation"><span><span data-i18n="animation">Flowing waves</span><small data-i18n="animationHint"></small></span><input id="animation" type="checkbox"></label>
+<label class="setting-row" for="alwaysOnTop"><span><span data-i18n="alwaysOnTop">Always on top</span><small data-i18n="alwaysOnTopHint"></small></span><input id="alwaysOnTop" type="checkbox"></label>
+<div class="section-label" data-i18n="connectionSection">CONNECTION</div>
+<label class="setting-row" for="interval"><span><span data-i18n="refreshSetting">Auto-refresh</span><small data-i18n="refreshHint"></small></span><select id="interval"><option value="10">10s</option><option value="15">15s</option><option value="30">30s</option><option value="60">60s</option></select></label>
+<label class="setting-row" for="startup"><span data-i18n="startup">Launch at sign-in</span><input id="startup" type="checkbox"></label>
+<div class="settings-note"><div data-i18n="noteMapping"></div><div data-i18n="noteControls"></div><div data-i18n="noteWeekly"></div></div>
+<div class="settings-state" id="connectionState" role="status"></div><div class="settings-foot"><span>CODEX HALO · 1.1.0</span><button id="quit" data-i18n="quit">Quit Halo</button></div>
+</main><script src="i18n.js"></script><script src="settings.js"></script></body></html>

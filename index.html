@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'"><title>Codex Halo</title><link rel="stylesheet" href="style.css"></head>
+<body data-mode="orb">
+<main id="orb" class="orb-mode">
+  <div id="sphere" class="sphere">
+    <canvas id="water" width="360" height="360"></canvas>
+    <div class="orb-copy"><div class="orb-brand"><i id="orbDot" class="dot loading"></i>CODEX</div><div id="orbPrimary" class="orb-number">--<small>%</small></div><div class="orb-label" data-i18n="primaryLabel">5h remaining</div><div class="orb-week"><span id="orbWeeklyLabel" data-i18n="secondaryLabel">Weekly</span><strong id="orbSecondary">--<small>%</small></strong></div></div>
+    <span class="specular"></span>
+  </div>
+  <div class="orb-tools"><button data-action="mode" data-value="panel" data-i18n-title="switchPanel">↗</button><button data-action="refresh" data-i18n-title="refresh">↻</button><button data-action="settings" data-i18n-title="settings">⚙</button><button data-action="hide" data-i18n-title="hide">−</button></div>
+</main>
+<main id="panel" class="panel-mode glass">
+  <header><img class="brand-icon" src="icon.png" alt=""><div class="brand"><strong>Codex <span>Halo</span></strong><div data-i18n="tagline">YOUR USAGE, IN FLOW</div></div><nav><button data-action="mode" data-value="orb" data-i18n-title="switchOrb">◉</button><button data-action="settings" data-i18n-title="settings">⚙</button><button data-action="hide" data-i18n-title="hide">−</button></nav></header>
+  <div class="eyebrow"><span><i id="panelDot" class="dot loading"></i><span id="connection">Connecting to Codex</span></span><span id="plan" class="badge">CODEX</span></div>
+  <section class="metrics">
+    <article><div class="metric-title"><span class="title-text" data-i18n="primaryTitle">5-hour limit</span><span data-i18n="shortTerm">SHORT TERM</span></div><div class="metric-number cyan" id="panelPrimary">--<small>%</small></div><div class="metric-sub" data-i18n="remaining">remaining</div><div class="track"><div id="barPrimary" class="fill"></div></div><div class="reset" id="resetPrimary"></div></article>
+    <div class="divider"></div>
+    <article><div class="metric-title"><span id="secondaryTitle" class="title-text">Weekly limit</span><span id="secondarySubtitle">WEEKLY</span></div><div class="metric-number violet" id="panelSecondary">--<small>%</small></div><div class="metric-sub" data-i18n="remaining">remaining</div><div class="track"><div id="barSecondary" class="fill purple"></div></div><div class="reset" id="resetSecondary"></div></article>
+  </section>
+  <footer><span id="updated"></span><button id="refreshButton" data-action="refresh" data-i18n-title="refresh">↻ <span id="intervalLabel"></span></button></footer>
+  <div class="status-message" id="statusMessage" role="status"></div>
+</main><script src="i18n.js"></script><script src="renderer.js"></script></body></html>
