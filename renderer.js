@@ -50,7 +50,7 @@ function draw(time){
   requestAnimationFrame(draw);
   if(document.body.dataset.mode!=='orb'||document.hidden)return;
   if(time-previous<1000/30)return;const dt=Math.min((time-previous)/1000,.06);previous=time;
-  const animate=current?.config.animation!==false;phase+=animate?dt*.55:0;level+=animate?(target-level)*Math.min(1,dt*3.5):target-level;
+  const animate=current?.config.animation!==false;phase+=animate?dt*.95:0;level+=animate?(target-level)*Math.min(1,dt*3.5):target-level;
   // Match the actual Windows pixel scale: no downsampled, subpixel progress orbit.
   const size=104,dpr=window.devicePixelRatio||1,pixels=Math.round(canvas.clientWidth*dpr),c=size/2,r=size/2;
   if(drawingScale!==dpr){
@@ -74,7 +74,8 @@ function draw(time){
   for(let layer=0;level>.002&&layer<2;layer++){
     ctx.beginPath();ctx.moveTo(0,size);
     for(let x=0;x<=size;x++){
-      const wave=level>.998?0:Math.sin(x/23+phase*(layer?-1:1)+layer*1.9)*(1+layer*.4)+Math.sin(x/39+phase*.65)*.45;
+      const amplitude=(4.8+layer*1.5)*(level>.98?.45:1);
+      const wave=Math.sin(x/23+phase*(layer?-1:1)+layer*1.9)*amplitude+Math.sin(x/39+phase*.65)*1.3;
       ctx.lineTo(x,y+wave+layer*.8);
     }
     ctx.lineTo(size,size);ctx.closePath();

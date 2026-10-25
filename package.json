@@ -1,7 +1,7 @@
 {
   "name": "codex-halo",
   "productName": "Codex Halo",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A transparent Windows widget to view remaining Codex quota and usage progress at a glance.",
   "main": "main.cjs",
   "scripts": {

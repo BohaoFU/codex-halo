@@ -1,5 +1,12 @@
 # Changelog / 更新记录
 
+## 1.4.1
+
+- Increase wave amplitude roughly fourfold and speed up the flow slightly.
+- Keep a gentle moving surface even when quota is full.
+- 水波幅度增至原来的约四倍，并稍微加快流动。
+- 满额度时也保留轻微水面起伏。
+
 ## 1.4.0
 
 - Reduce the sphere from 104px to 80px, with both quota values kept inside a 92px window.
