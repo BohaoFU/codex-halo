@@ -1,4 +1,4 @@
-const ORB_SIZE=116;
+const ORB_SIZE=92;
 function dockOrb(position,area){
   const x=Number.isFinite(position?.x)?position.x:area.x+area.width-ORB_SIZE;
   const y=Number.isFinite(position?.y)?position.y:area.y+area.height-ORB_SIZE-70;

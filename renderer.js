@@ -18,7 +18,11 @@ function render(s){
   document.body.classList.toggle('stale',stale);
   $('#orbPrimary').innerHTML=percentage(u?.primary);$('#panelPrimary').innerHTML=percentage(u?.primary);$('#panelSecondary').innerHTML=percentage(u?.secondary);
   $('#orbSecondary').innerHTML=percentage(u?.secondary);
-  $('#orbWeeklyLabel').textContent=t(u?.secondary?.minutes===10080?'secondaryLabel':'overallLabel');
+  $('#orbWeeklyLabel').textContent=u?.secondary?.minutes===10080?(s.language==='zh'?'周':'W'):t('overallLabel');
+  const reset=u?.primary?.resetsAt?new Date(u.primary.resetsAt*1000):null;
+  $('#orbReset').textContent=reset?reset.toLocaleTimeString(s.language==='zh'?'zh-CN':'en',{hour:'2-digit',minute:'2-digit',hour12:false}):'--:--';
+  $('#orbReset').dateTime=reset?reset.toISOString():'';
+  $('#orbReset').title=reset?`${t('primaryTitle')} · ${reset.toLocaleString(s.language==='zh'?'zh-CN':'en')}`:t('unknownReset');
   $('#secondaryTitle').textContent=duration(u?.secondary?.minutes);
   $('#secondarySubtitle').textContent=t(u?.secondary?.minutes===10080?'weekly':'longTerm');
   $('#barPrimary').style.width=(u?.primary?.remaining??0)+'%';$('#barSecondary').style.width=(u?.secondary?.remaining??0)+'%';
@@ -41,16 +45,25 @@ for(const event of ['pointerup','pointercancel','lostpointercapture'])sphere.add
 sphere.addEventListener('dblclick',()=>{if(!moved)window.halo.action('mode','panel');});
 window.halo.onState(render);window.halo.state().then(render);setInterval(()=>{if(current)render(current);},1000);
 const canvas=$('#water'),ctx=canvas.getContext('2d');
+let drawingScale=0;
 function draw(time){
   requestAnimationFrame(draw);
   if(document.body.dataset.mode!=='orb'||document.hidden)return;
   if(time-previous<1000/30)return;const dt=Math.min((time-previous)/1000,.06);previous=time;
   const animate=current?.config.animation!==false;phase+=animate?dt*.55:0;level+=animate?(target-level)*Math.min(1,dt*3.5):target-level;
   // Match the actual Windows pixel scale: no downsampled, subpixel progress orbit.
-  const size=104,dpr=window.devicePixelRatio||1,pixels=Math.round(size*dpr),c=size/2,r=50;
+  const size=104,dpr=window.devicePixelRatio||1,pixels=Math.round(canvas.clientWidth*dpr),c=size/2,r=size/2;
+  if(drawingScale!==dpr){
+    drawingScale=dpr;const root=document.documentElement;
+    root.style.setProperty('--pixel-x','0px');root.style.setProperty('--pixel-y','0px');
+    const rect=sphere.getBoundingClientRect();
+    root.style.setProperty('--pixel-x',`${(Math.round(rect.x*dpr)-rect.x*dpr)/dpr}px`);
+    root.style.setProperty('--pixel-y',`${(Math.round(rect.y*dpr)-rect.y*dpr)/dpr}px`);
+    root.style.setProperty('--edge-width',`${1/dpr}px`);
+  }
   if(canvas.width!==pixels||canvas.height!==pixels){canvas.width=pixels;canvas.height=pixels;}
   ctx.setTransform(pixels/size,0,0,pixels/size,0,0);ctx.clearRect(0,0,size,size);
-  ctx.save();ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.clip();
+  // The sphere clips once in CSS. Avoid overlapping canvas circle antialiasing.
   const alpha=(current?.config.opacity??78)/100;
   const bg=ctx.createLinearGradient(14,5,89,101);
   bg.addColorStop(0,`rgba(80,125,145,${alpha*.7})`);
@@ -84,10 +97,5 @@ function draw(time){
   const refract=ctx.createRadialGradient(76,90,0,72,86,35);
   refract.addColorStop(0,'#e0deff38');refract.addColorStop(1,'#d1dbff00');
   ctx.fillStyle=refract;ctx.fillRect(0,0,size,size);
-  ctx.restore();
-  // One continuous optical edge, entirely inside the sphere. Weekly stays in text.
-  const edge=ctx.createLinearGradient(13,8,91,97);
-  edge.addColorStop(0,'#f5ffffd9');edge.addColorStop(.34,'#dcf7ff55');edge.addColorStop(.65,'#c8deff24');edge.addColorStop(1,'#e8e5ff99');
-  ctx.beginPath();ctx.arc(c,c,r-.45,0,Math.PI*2);ctx.strokeStyle=edge;ctx.lineWidth=1.1;ctx.stroke();
 }
 requestAnimationFrame(draw);

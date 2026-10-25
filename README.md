@@ -13,16 +13,17 @@ Keep your remaining percentages, usage indicators and reset countdowns beside yo
 
 | Water orb | Corner panel |
 | :---: | :---: |
-| <img src="docs/images/orb-en.png" width="116" alt="Compact orb with both limits inside the circle"> | <img src="docs/images/panel-en.png" width="368" alt="Usage panel with remaining percentages and reset countdowns"> |
+| <img src="docs/images/orb-en.png" width="92" alt="Compact orb with both limits inside the circle"> | <img src="docs/images/panel-en.png" width="368" alt="Usage panel with remaining percentages and reset countdowns"> |
 | Compact, draggable and always visible | Both windows, progress bars and reset times at a glance |
 
 *Previews use example data: 68% remaining for 5 hours and 82% for the week. No real account usage is shown.*
 
 ## Features
 
-- **Two display modes:** a clean 104px water orb with no button strip, or a panel anchored to the bottom-right of your display's work area.
+- **Two display modes:** a clean 80px water orb with no button strip, or a panel anchored to the bottom-right of your display's work area.
 - **Release to snap:** the orb glides to the nearest left or right edge after dragging, preserves its height and remembers the docked position.
 - **Readable usage:** water level shows the 5-hour remainder; the lower number shows the weekly remainder inside the glass.
+- **Compact footer:** the 5-hour reset time sits at the lower left; weekly remaining percentage sits at the lower right, without a 5h caption.
 - **Clean glass material:** soft reflections, a continuous inset edge and restrained cyan/violet waves. No external progress ring or floating particles; rendering follows Windows display scaling.
 - **Automatic updates:** refresh every 15 seconds by default, choose 10 / 15 / 30 / 60 seconds, or refresh manually.
 - **Transparent gradients:** cyan-to-violet glass, adjustable opacity and optional flowing waves.

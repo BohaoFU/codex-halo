@@ -2,6 +2,13 @@
 
 ## 1.4.0
 
+- Reduce the sphere from 104px to 80px, with both quota values kept inside a 92px window.
+- 球体从 104px 缩至 80px，窗口为 92px，两组额度仍在球内。
+- Remove the 5h caption; show the 5-hour reset clock time at the lower left and weekly remainder at the lower right.
+- 删除 5h 文案，底部左侧显示 5 小时额度的重置时间，右侧显示每周剩余。
+- Clip the glass once and align it to physical pixels, with one crisp one-pixel edge.
+- 球体只做一次圆形裁切，并按物理像素对齐，使用单层清晰边框。
+
 - Replace the outer weekly progress orbit and bubble particles with a clean glass sphere.
 - Add broad highlights, soft edge shading and a single continuous inset optical edge.
 - Render at the actual Windows pixel scale to avoid resampling artifacts; keep weekly quota inside the sphere.

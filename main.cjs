@@ -142,8 +142,10 @@ async function smokeTest(){
     const check=async(label,expr)=>{if(!await win.webContents.executeJavaScript(expr))throw new Error(label);};
     await check('orb data missing',`document.querySelector('#orbPrimary').textContent.includes('%')`);
     await check('system language not applied',`document.documentElement.lang===${JSON.stringify(state.language==='zh'?'zh-CN':'en')}`);
-    await check('orb size mismatch',`innerWidth===116 && innerHeight===116 && document.querySelector('#sphere').offsetWidth===104`);
+    await check('orb size mismatch',`innerWidth===${ORB_SIZE} && innerHeight===${ORB_SIZE} && document.querySelector('#sphere').offsetWidth===80`);
     await check('toolbar still exists',`document.querySelector('.orb-tools')===null`);
+    await check('5h caption still exists',`document.querySelector('.orb-label')===null`);
+    await check('reset time missing',`/^\\d{2}:\\d{2}$/.test(document.querySelector('#orbReset').textContent) && document.querySelector('#orbReset').dateTime===${JSON.stringify(state.usage?.primary?.resetsAt?new Date(state.usage.primary.resetsAt*1000).toISOString():'')}`);
     await check('weekly outside circle',`(()=>{const a=document.querySelector('.orb-week').getBoundingClientRect(),b=document.querySelector('#sphere').getBoundingClientRect();return a.left>b.left&&a.right<b.right&&a.top>b.top&&a.bottom<b.bottom})()`);
     if(trayMenu().items[0].label!==t('show'))throw new Error('tray locale mismatch');
     const area=screen.getDisplayMatching(win.getBounds()).workArea;
@@ -181,7 +183,7 @@ async function smokeTest(){
     updatePresence({error:true});if(!win.isVisible())throw new Error('unknown presence hid a known-running desktop');
     state.desktopError=false;
     const before=state.usage?.updatedAt;await refresh();if(state.usage?.updatedAt<=before)throw new Error('second live refresh failed');
-    const result={ok:!state.error,error:state.error,systemLanguage:state.systemLanguage,language:state.language,usage:state.usage,checks:['live RPC','104px orb + weekly inside circle','no toolbar','animated left + right snap and saved position','auto system language','localized tray','manual language override + return to auto','panel switch','settings fit','opacity + animation + interval controls','Codex exit hides both modes + pauses polling','restart restores widget','manual hide survives polling','unknown presence preserves known state','second live refresh']};
+    const result={ok:!state.error,error:state.error,systemLanguage:state.systemLanguage,language:state.language,usage:state.usage,checks:['live RPC','80px orb + weekly inside circle','no toolbar','animated left + right snap and saved position','auto system language','localized tray','manual language override + return to auto','panel switch','settings fit','opacity + animation + interval controls','Codex exit hides both modes + pauses polling','restart restores widget','manual hide survives polling','unknown presence preserves known state','second live refresh']};
     fs.writeFileSync(path.join(out,'smoke-result.json'),JSON.stringify(result,null,2));
   }catch(e){fs.writeFileSync(path.join(out,'smoke-result.json'),JSON.stringify({ok:false,error:e.message}));}
   app.quit();
