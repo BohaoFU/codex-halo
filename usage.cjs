@@ -35,7 +35,7 @@ class UsageClient extends EventEmitter {
     child.on('error',fail);child.on('exit',fail);child.stdin.on('error',()=>{});
     child.stderr.on('data',()=>{}); // Never persist Codex logs or credentials.
     child.stdout.on('data',chunk=>{buffer+=chunk;let i;while((i=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,i);buffer=buffer.slice(i+1);try{this.receive(JSON.parse(line));}catch{}}});
-    try {await this.request('initialize',{clientInfo:{name:'codex_halo',title:'Codex Halo',version:'1.3.0'}});child.stdin.write(JSON.stringify({method:'initialized'})+'\n');}
+    try {await this.request('initialize',{clientInfo:{name:'codex_halo',title:'Codex Halo',version:require('./package.json').version}});child.stdin.write(JSON.stringify({method:'initialized'})+'\n');}
     catch(e){child.kill();if(this.child===child)this.child=null;throw e;}
   }
   receive(m){

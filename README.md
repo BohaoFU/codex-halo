@@ -22,7 +22,8 @@ Keep your remaining percentages, usage indicators and reset countdowns beside yo
 
 - **Two display modes:** a clean 104px water orb with no button strip, or a panel anchored to the bottom-right of your display's work area.
 - **Release to snap:** the orb glides to the nearest left or right edge after dragging, preserves its height and remembers the docked position.
-- **Readable usage:** water level shows the 5-hour remainder; the outer ring and lower number show the weekly remainder.
+- **Readable usage:** water level shows the 5-hour remainder; the lower number shows the weekly remainder inside the glass.
+- **Clean glass material:** soft reflections, a continuous inset edge and restrained cyan/violet waves. No external progress ring or floating particles; rendering follows Windows display scaling.
 - **Automatic updates:** refresh every 15 seconds by default, choose 10 / 15 / 30 / 60 seconds, or refresh manually.
 - **Transparent gradients:** cyan-to-violet glass, adjustable opacity and optional flowing waves.
 - **Chinese and English:** follows your Windows preferred display language, with a manual override.

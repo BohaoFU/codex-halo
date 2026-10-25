@@ -45,24 +45,49 @@ function draw(time){
   requestAnimationFrame(draw);
   if(document.body.dataset.mode!=='orb'||document.hidden)return;
   if(time-previous<1000/30)return;const dt=Math.min((time-previous)/1000,.06);previous=time;
-  const animate=current?.config.animation!==false;phase+=animate?dt*.8:0;level+=animate?(target-level)*.045:target-level;
-  const ratio=2,c=180,r=148;ctx.clearRect(0,0,360,360);ctx.save();ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.clip();
+  const animate=current?.config.animation!==false;phase+=animate?dt*.55:0;level+=animate?(target-level)*Math.min(1,dt*3.5):target-level;
+  // Match the actual Windows pixel scale: no downsampled, subpixel progress orbit.
+  const size=104,dpr=window.devicePixelRatio||1,pixels=Math.round(size*dpr),c=size/2,r=50;
+  if(canvas.width!==pixels||canvas.height!==pixels){canvas.width=pixels;canvas.height=pixels;}
+  ctx.setTransform(pixels/size,0,0,pixels/size,0,0);ctx.clearRect(0,0,size,size);
+  ctx.save();ctx.beginPath();ctx.arc(c,c,r,0,Math.PI*2);ctx.clip();
   const alpha=(current?.config.opacity??78)/100;
-  let bg=ctx.createLinearGradient(30,20,310,330);bg.addColorStop(0,`rgba(26,55,78,${alpha*.77})`);bg.addColorStop(1,`rgba(25,20,56,${alpha*.84})`);ctx.fillStyle=bg;ctx.fillRect(0,0,360,360);
+  const bg=ctx.createLinearGradient(14,5,89,101);
+  bg.addColorStop(0,`rgba(80,125,145,${alpha*.7})`);
+  bg.addColorStop(.38,`rgba(29,55,73,${alpha*.82})`);
+  bg.addColorStop(1,`rgba(40,36,73,${alpha*.88})`);
+  ctx.fillStyle=bg;ctx.fillRect(0,0,size,size);
   const y=c+r-level*r*2;
-  for(let layer=0;layer<3;layer++){
-    ctx.beginPath();ctx.moveTo(0,360);
-    for(let x=0;x<=360;x+=3){const wave=Math.sin(x/64+phase*(layer===1?-1:1)+layer*1.8)*(7+layer*2)+Math.sin(x/39+phase*.65)*3;ctx.lineTo(x,y+wave+layer*5);}
-    ctx.lineTo(360,360);ctx.closePath();const g=ctx.createLinearGradient(25,y-30,320,350);g.addColorStop(0,`rgba(80,244,213,${alpha*(layer===2?.45:.17)})`);g.addColorStop(.48,`rgba(65,180,230,${alpha*.3})`);g.addColorStop(1,`rgba(157,91,250,${alpha*.52})`);ctx.fillStyle=g;ctx.fill();
-    if(layer===2){ctx.strokeStyle='#a9fff23c';ctx.lineWidth=1;ctx.stroke();}
+  for(let layer=0;level>.002&&layer<2;layer++){
+    ctx.beginPath();ctx.moveTo(0,size);
+    for(let x=0;x<=size;x++){
+      const wave=level>.998?0:Math.sin(x/23+phase*(layer?-1:1)+layer*1.9)*(1+layer*.4)+Math.sin(x/39+phase*.65)*.45;
+      ctx.lineTo(x,y+wave+layer*.8);
+    }
+    ctx.lineTo(size,size);ctx.closePath();
+    const water=ctx.createLinearGradient(7,Math.max(0,y-8),99,100);
+    water.addColorStop(0,`rgba(112,238,223,${alpha*(layer?.3:.15)})`);
+    water.addColorStop(.5,`rgba(82,184,218,${alpha*(layer?.29:.17)})`);
+    water.addColorStop(1,`rgba(156,132,239,${alpha*(layer?.39:.19)})`);
+    ctx.fillStyle=water;ctx.fill();
   }
-  const shine=ctx.createRadialGradient(116,66,3,130,85,220);shine.addColorStop(0,'#b9f9ff18');shine.addColorStop(1,'#70a9ff00');ctx.fillStyle=shine;ctx.fillRect(0,0,360,360);
-  if(animate)for(let i=0;i<8;i++){const x=80+(i*37)%210,by=310-((phase*13+i*41)%240);if(by>y+15){ctx.beginPath();ctx.arc(x,by,1.2+(i%3)*.6,0,7);ctx.fillStyle='#c7ffff38';ctx.fill();}}
+  // Broad reflections and an inset shadow give the material depth without particles.
+  const shade=ctx.createRadialGradient(47,43,30,c,c,r);
+  shade.addColorStop(0,'#14284200');shade.addColorStop(.78,'#14284200');shade.addColorStop(1,'#10263d35');
+  ctx.fillStyle=shade;ctx.fillRect(0,0,size,size);
+  const light=ctx.createRadialGradient(26,12,0,33,22,70);
+  light.addColorStop(0,'#edffff75');light.addColorStop(.35,'#e5ffff23');light.addColorStop(1,'#ecffff00');
+  ctx.fillStyle=light;ctx.fillRect(0,0,size,size);
+  const gloss=ctx.createLinearGradient(19,6,42,42);
+  gloss.addColorStop(0,'#ffffff38');gloss.addColorStop(1,'#ffffff00');
+  ctx.beginPath();ctx.ellipse(36,19,33,10,-.45,0,Math.PI*2);ctx.fillStyle=gloss;ctx.fill();
+  const refract=ctx.createRadialGradient(76,90,0,72,86,35);
+  refract.addColorStop(0,'#e0deff38');refract.addColorStop(1,'#d1dbff00');
+  ctx.fillStyle=refract;ctx.fillRect(0,0,size,size);
   ctx.restore();
-  const ring=ctx.createLinearGradient(30,30,320,320);ring.addColorStop(0,'#91ffe6');ring.addColorStop(.5,'#70bcf4');ring.addColorStop(1,'#b18aff');
-  ctx.beginPath();ctx.arc(c,c,r+6,-Math.PI/2,Math.PI*1.5);ctx.strokeStyle='#a8c8ff10';ctx.lineWidth=2;ctx.stroke();
-  const weekly=current?.usage?.secondary?.remaining;
-  if(weekly!==undefined){ctx.beginPath();ctx.arc(c,c,r+6,-Math.PI/2,-Math.PI/2+Math.PI*2*weekly/100);ctx.strokeStyle=ring;ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke();}
-  ctx.beginPath();ctx.arc(c,c,r-1,Math.PI*1.05,Math.PI*1.67);ctx.strokeStyle='#b5f4ff44';ctx.lineWidth=1.5;ctx.stroke();
+  // One continuous optical edge, entirely inside the sphere. Weekly stays in text.
+  const edge=ctx.createLinearGradient(13,8,91,97);
+  edge.addColorStop(0,'#f5ffffd9');edge.addColorStop(.34,'#dcf7ff55');edge.addColorStop(.65,'#c8deff24');edge.addColorStop(1,'#e8e5ff99');
+  ctx.beginPath();ctx.arc(c,c,r-.45,0,Math.PI*2);ctx.strokeStyle=edge;ctx.lineWidth=1.1;ctx.stroke();
 }
 requestAnimationFrame(draw);

@@ -13,5 +13,5 @@ fs.cpSync(path.join(__dirname,'docs'),path.join(dest,'docs'),{recursive:true});
 import('rcedit').then(({rcedit})=>rcedit(path.join(dest,'CodexHalo.exe'),{
   icon:path.join(__dirname,'icon.ico'),
   'version-string':{ProductName:'Codex Halo',FileDescription:'Codex Halo - Usage Widget',CompanyName:'Codex Halo',OriginalFilename:'CodexHalo.exe'},
-  'file-version':'1.3.0','product-version':'1.3.0'
+  'file-version':require('./package.json').version,'product-version':require('./package.json').version
 })).then(()=>console.log('Portable app: '+path.join(dest,'CodexHalo.exe'))).catch(e=>{console.error(e);process.exitCode=1;});

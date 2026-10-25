@@ -1,5 +1,17 @@
 # Changelog / 更新记录
 
+## 1.4.0
+
+- Replace the outer weekly progress orbit and bubble particles with a clean glass sphere.
+- Add broad highlights, soft edge shading and a single continuous inset optical edge.
+- Render at the actual Windows pixel scale to avoid resampling artifacts; keep weekly quota inside the sphere.
+- Keep the standalone widget as the main experience; the native plugin trial is discontinued.
+
+- 移除球外每周进度弧与气泡粒子，改为干净通透的玻璃球。
+- 使用柔和高光、内缘阴影和连续玻璃边缘，减少杂点和生硬描边。
+- 按 Windows 实际像素缩放绘制，减少缩放毛边；每周额度继续显示在球内。
+- 回到独立悬浮球方案，停止原生插件试验。
+
 ## 1.3.0
 
 - Remove the orb's entire hover toolbar; use right-click and the tray for commands.
